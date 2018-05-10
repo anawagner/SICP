@@ -1,0 +1,16 @@
+(define (collect filter numbers)
+  (define (iter numbers evens)
+    (cond ((null? numbers)
+	   evens)
+	  ((filter (car numbers))
+	   (iter (cdr numbers) (append evens (list (car numbers)))))
+	  (else (iter (cdr numbers) evens))))
+  (iter numbers '()))
+
+(define (same-parity x . n)
+  (if (even? x)
+      (cons x (collect even? n))
+      (cons x (collect odd? n))))
+
+(same-parity 1 2 3 4 5 6 7)
+(same-parity 2 3 4 5 6 7)

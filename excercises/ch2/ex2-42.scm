@@ -1,0 +1,48 @@
+(define nil '())
+(define (enumerate-interval low high)
+  (if (> low high)
+      nil
+      (cons low (enumerate-interval (+ low 1) high))))
+(define (flatmap proc seq)
+  (accumulate append nil (map proc seq)))
+
+(define (make-position row col)
+  (list row col))
+(define (position-row position)
+  (car position))
+(define (position-col position)
+  (cadr position))
+
+(define (queens board-size)
+  (define (queen-cols k)
+    (if (= k 0)
+	(list empty-board)
+	(filter (lambda (positions) (safe? k positions))
+		(flatmap
+		 (lambda (rest-of-queens)
+		   (map (lambda (new-row)
+			  (adjoin-position new-row k rest-of-queens))
+			(enumerate-interval 1 board-size)))
+		 (queen-cols (- k 1))))))
+  (queen-cols board-size))
+
+(define empty-board nil)
+(define (adjoin-position row col positions)
+  (cons (make-position row col) positions))
+
+(define (safe? k positions)
+  (let ((row (caar positions))
+	(queens (cdr positions)))
+    (define (compare-to rest)
+      (if (null? rest)
+	  #t
+	  (and (not (= (position-row (car rest))
+		       row))
+	       (not (= (position-row (car rest))
+		       (+ row (- k (position-col (car rest))))))
+	       (not (= (position-row (car rest))
+		       (- row (- k (position-col (car rest))))))
+	       (compare-to (cdr rest)))))
+    (compare-to queens)))
+
+(length (queens 8))
