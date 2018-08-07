@@ -311,7 +311,19 @@
 	(let ((others (ask self 'PEOPLE-AROUND)))
 	  (if (not (null? others))
 	      (ask self 'SAY (cons "Hi" (names-of others)))))
-	#T))
+	#T)
+
+      'HAS-A
+      (lambda (type)
+	(find-all self type))
+
+      'HAS-A-THING-NAMED
+      (lambda (name)
+	(filter (lambda (thing)
+		  (if (eq? name (ask thing 'NAME))
+		      #t
+		      #f))
+		(ask self 'THINGS))))
      mobile-thing-part container-part)))
 
 ;;--------------------
