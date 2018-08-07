@@ -53,7 +53,9 @@
      (make-methods
       'THINGS      (lambda () things)
       'HAVE-THING? (lambda (thing)
-		     (not (null? (memq thing things))))
+		     (if (memq thing things)
+			 #t
+			 #f))
       'ADD-THING   (lambda (thing)
 		     (if (not (ask self 'HAVE-THING? thing))
 			 (set! things (cons thing things)))
@@ -427,7 +429,7 @@
       (lambda ()
 	(if (= (random hunger) 0)
 	    (let ((people (ask self 'PEOPLE-AROUND)))
-	      (if people
+	      (if (not (null? people))
 		  (let ((victim (pick-random people)))
 		    (ask self 'EMIT
 			 (list (ask self 'NAME) "takes a bite out of"
