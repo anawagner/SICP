@@ -530,9 +530,17 @@
 	  (if success? (ask clock 'TICK))
 	  success?))
       
-      'DIE
+     'DIE
       (lambda (perp)
 	(ask self 'SAY (list "I am slain!"))
-	(ask person-part 'DIE perp)))
-     
+	(ask person-part 'DIE perp))
+
+      'FEEL-THE-FORCE
+      (lambda ()
+	(for-each (lambda (person)
+		    (ask screen 'TELL-ROOM (ask self 'LOCATION)
+			 (list (ask person 'NAME) "is at"
+			       (ask (ask person 'LOCATION) 'NAME))))
+		  (all-people))
+	'done))
      person-part)))
