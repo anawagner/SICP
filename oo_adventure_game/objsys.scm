@@ -257,6 +257,10 @@
                                          (not (eq? x (car lst))))
                                        lst)))))
 
+;; if a person has a ring-of-obfuscation, he/she is invisible
+(define (visible? person)
+  (null? (ask person 'has-a 'ring-of-obfuscation)))
+
 ;; utility for finding all the people in the world
 (define (all-people)
   (append-map (lambda (room) (find-all room 'person)) all-rooms)) 

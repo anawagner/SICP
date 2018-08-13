@@ -234,7 +234,8 @@
         
       'PEOPLE-AROUND        ; other people in room...
       (lambda ()
-	(delq self (find-all (ask self 'LOCATION) 'PERSON)))
+	(delq self (filter visible?
+			   (find-all (ask self 'LOCATION) 'PERSON))))
         
       'STUFF-AROUND         ; stuff (non people) in room...
       (lambda ()
@@ -483,6 +484,22 @@
 		(ask spell 'INCANT)
 		(ask spell 'ACTION)))
 
+;;
+;; ring-of-obfuscation
+;;
+(define (create-ring-of-obfuscation name location)
+  (create-instance ring-of-obfuscation name location))
+
+(define (ring-of-obfuscation self name location)
+  (let ((mobile-part (mobile-thing self name location)))
+    (make-handler
+     'ring-of-obfuscation
+     (make-methods
+      'INSTALL
+      (lambda ()
+	(ask mobile-part 'INSTALL)))
+     mobile-part)))
+
 ;;--------------------
 ;; avatar
 ;;
@@ -541,6 +558,6 @@
 		    (ask screen 'TELL-ROOM (ask self 'LOCATION)
 			 (list (ask person 'NAME) "is at"
 			       (ask (ask person 'LOCATION) 'NAME))))
-		  (all-people))
+		  (filter visible? (all-people)))
 	'done))
      person-part)))
