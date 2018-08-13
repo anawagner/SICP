@@ -70,6 +70,8 @@
     (create-mobile-thing 'sicp stata-center)
     (create-mobile-thing 'engineering-book barker-library)
     (create-mobile-thing 'diploma graduation-stage)
+    (create-ring-of-obfuscation 'one-ring grendels-den)
+    (create-ring-of-obfuscation 'magic-ring eecs-ug-office)
     
     (list 10-250 lobby-10 grendels-den barker-library lobby-7
           eecs-hq eecs-ug-office edgerton-hall 34-301 6001-lab
