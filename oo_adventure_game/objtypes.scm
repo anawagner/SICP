@@ -500,6 +500,59 @@
 	(ask mobile-part 'INSTALL)))
      mobile-part)))
 
+;; if a person has a ring-of-obfuscation, he/she is invisible
+(define (visible? person)
+  (null? (ask person 'has-a 'ring-of-obfuscation)))
+
+;;
+;; wand
+;;
+(define (create-wand name location)
+  (create-instance wand name location))
+
+(define (wand self name location)
+  (let ((mobile-part (mobile-thing self name location)))
+    (make-handler
+     'wand
+     (make-methods
+      'ZAP
+      (lambda (target)
+	(if (held-by-person? self)
+	    (let ((caster (ask self 'LOCATION)))
+	      (let ((spell-to-cast
+		     (pick-random (ask caster 'HAS-A 'SPELL))))
+		(cond (spell-to-cast
+		       (ask caster 'EMIT
+			    (list (ask caster 'NAME) "is waving"
+				  (ask self 'NAME) "saying"
+				  (ask spell-to-cast 'INCANT)))
+		       (ask spell-to-cast 'USE caster target))
+		      (else (ask caster 'EMIT
+				 (list (ask caster 'NAME) "waves"
+				       (ask self 'NAME)
+				       "to no avail"))))))
+	    (error "Wand cannot ZAP unless held by PERSON")))
+      'WAVE
+      (lambda ()
+	(if (held-by-person? self)
+	    (let ((caster (ask self 'LOCATION)))
+	      (let ((target
+		     (pick-random (delq caster
+					(ask (ask caster 'LOCATION)
+					     'THINGS)))))
+		(if target
+		    (ask self 'ZAP target)
+		    (ask caster 'EMIT (list (ask caster 'NAME)
+					    "waves"
+					    (ask self 'NAME)
+					    "at nothing"
+					    "to no avail")))))
+	    (error "Wand cannot WAVE unless held by a PERSON"))))
+     mobile-part)))
+
+(define (held-by-person? thing)
+  (ask (ask thing 'LOCATION) 'IS-A 'PERSON))
+
 ;;--------------------
 ;; avatar
 ;;

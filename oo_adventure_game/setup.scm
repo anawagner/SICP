@@ -70,8 +70,6 @@
     (create-mobile-thing 'sicp stata-center)
     (create-mobile-thing 'engineering-book barker-library)
     (create-mobile-thing 'diploma graduation-stage)
-    (create-ring-of-obfuscation 'one-ring grendels-den)
-    (create-ring-of-obfuscation 'magic-ring eecs-ug-office)
     
     (list 10-250 lobby-10 grendels-den barker-library lobby-7
           eecs-hq eecs-ug-office edgerton-hall 34-301 6001-lab
@@ -106,6 +104,20 @@
   (for-each (lambda (room)
 	      (clone-spell (pick-random (ask chamber-of-stata 'THINGS)) room))
 	    rooms))
+
+(define (populate-special-items rooms)
+  (let ((rings
+	 (map (lambda (name)
+		(create-ring-of-obfuscation name
+					    (pick-random rooms)))
+	      '(one-ring magic-ring)))
+	(wands
+	 (map (lambda (name)
+		(create-wand name
+			     (pick-random rooms)))
+	      '(elder-wand unicorn-hair-wand
+			   dragon-heartstring-wand wand-of-destiny))))
+    (append rings wands)))
 
 (define (populate-players rooms)
   (let* ((students (map (lambda (name)
@@ -153,6 +165,8 @@
     (populate-spells rooms)
 
     (populate-players rooms)
+
+    (populate-special-items rooms)
 
     ;uncomment after writing chosen one
 ;    (create-chosen-one 'hairy-cdr (pick-random rooms)
