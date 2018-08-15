@@ -101,6 +101,26 @@
      (lambda (caster target)
        (ask target 'EMIT (list "A slug comes out of" (ask target 'NAME) "'s mouth."))
        (create-mobile-thing 'slug (ask target 'LOCATION))))
+
+    (create-spell
+     'wind-of-doom
+     chamber
+     'THING
+     "mali spiritus"
+     (lambda (caster target)
+       (cond ((ask target 'IS-A 'PERSON)
+	      (ask target 'EMIT
+		   (list "A dark cold wind sweeps through"
+			 (ask (ask target 'LOCATION) 'NAME)
+			 "and knocks" (ask target 'NAME)
+			 "off their feet"))
+	      (ask target 'SUFFER (random-number 2) caster))
+	     (else (ask target 'EMIT
+			(list "A dark cold wind sweeps through"
+			      (ask (ask target 'LOCATION) 'NAME)
+			      "and" (ask target 'NAME)
+			      "vanishes without a trace"))
+		   (ask target 'DESTROY)))))
     chamber))
 
 (define (populate-spells rooms)
