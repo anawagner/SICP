@@ -121,6 +121,25 @@
 			      "and" (ask target 'NAME)
 			      "vanishes without a trace"))
 		   (ask target 'DESTROY)))))
+
+    (create-spell
+     'accipere
+     chamber
+     'MOBILE-THING
+     "accipere"
+     (lambda (caster target)
+       (map (lambda (thing) (ask caster 'take thing))
+	    (ask caster 'PEEK-AROUND))))
+
+    (create-spell
+     'expelliarmus
+     chamber
+     'PERSON
+     "expelliarmus"
+     (lambda (caster target)
+       (map (lambda (wand) (ask caster 'take wand))
+	    (ask target 'HAS-A 'WAND))))
+     
     chamber))
 
 (define (populate-spells rooms)
