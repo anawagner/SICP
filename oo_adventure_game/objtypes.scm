@@ -461,26 +461,33 @@
 ;;
 ;; spell
 ;;
-(define (create-spell name location incant action)
-  (create-instance spell name location incant action))
+(define (create-spell name location target-type incant action)
+  (create-instance spell name location target-type incant action))
 
-(define (spell self name location incant action)
+(define (spell self name location target-type incant action)
   (let ((mobile-part (mobile-thing self name location)))
     (make-handler
      'spell
      (make-methods
       'INCANT
       (lambda () incant)
+      'TARGET-TYPE
+      (lambda () target-type)
       'ACTION
       (lambda () action)
       'USE
       (lambda (caster target)
-	(action caster target)))
+	(if (ask target 'IS-A target-type)
+	    (action caster target)
+	    (ask target 'EMIT (list (ask self 'NAME)
+				    "has no effect on"
+				    (ask target 'NAME))))))
      mobile-part)))
 
 (define (clone-spell spell newloc)
   (create-spell (ask spell 'NAME)
 		newloc
+		(ask spell 'TARGET-TYPE)
 		(ask spell 'INCANT)
 		(ask spell 'ACTION)))
 

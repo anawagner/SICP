@@ -87,13 +87,16 @@
     (create-spell
      'boil-spell
      chamber
+     'PERSON
      "habooic katarnum"
      (lambda (caster target)
-       (ask target 'EMIT
-	    (list (ask target 'NAME) "grows boils on their nose"))))
+       (ask target 'EMIT (list (ask target 'NAME)
+			       "grows boils on their nose"))))
+    
     (create-spell
      'slug-spell
      chamber
+     'PERSON
      "dagnabbit ekaterin"
      (lambda (caster target)
        (ask target 'EMIT (list "A slug comes out of" (ask target 'NAME) "'s mouth."))
