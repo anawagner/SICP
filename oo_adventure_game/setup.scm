@@ -248,9 +248,9 @@
 ; (show clock)
 ; (pp me)
 
-(load "objsys.scm")
-(load "objtypes.scm")
-(setup 'ana)
+;;(load "objsys.scm")
+;;(load "objtypes.scm")
+;;(setup 'ana)
 ;;(create-wit-student 'hermione (ask me 'location) 1 10)
 ;;(create-wit-student 'ron (ask me 'location) 1 10)
 ;;(create-wand 'dragon-heartstring-wand (thing-named 'hermione))
@@ -260,8 +260,5 @@
 ;;(create-wand 'mywand me)
 ;;(ask (thing-named 'hermione) 'take (thing-named 'boil-spell))
 ;;(ask (thing-named 'ron) 'take (thing-named 'slug-spell))
-
-;; change accipere spell so that it shows a message when there are
-;; no items to take
-;;
-;; change EAT-PEOPLE in troll let victim (pick-random...
+;;(create-troll 'zombie (ask me 'location) 1 3)
+;;(ask (thing-named 'zombie) 'eat-people)

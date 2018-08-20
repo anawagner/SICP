@@ -441,16 +441,15 @@
       'EAT-PEOPLE
       (lambda ()
 	(if (= (random hunger) 0)
-	    (let ((people (ask self 'PEOPLE-AROUND)))
-	      (if (not (null? people))
-		  (let ((victim (pick-random people)))
-		    (ask self 'EMIT
-			 (list (ask self 'NAME) "takes a bite out of"
-			       (ask victim 'NAME)))
-		    (ask victim 'SUFFER (random-number 3) self)
-		    'tasty)
-		  (ask self 'EMIT
-		       (list (ask self 'NAME) "'s belly rumbles"))))
+	    (let ((victim (pick-random (ask self 'PEOPLE-AROUND))))
+	      (cond (victim
+		     (ask self 'EMIT
+			  (list (ask self 'NAME) "takes a bite out of"
+				(ask victim 'NAME)))
+		     (ask victim 'SUFFER (random-number 3) self)
+		     'tasty)
+		    (else (ask self 'EMIT
+			       (list (ask self 'NAME) "'s belly rumbles")))))
 	    'not-hungry-now))
       'DIE
       (lambda (perp)
