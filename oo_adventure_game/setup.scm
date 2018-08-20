@@ -121,16 +121,18 @@
 			      "and" (ask target 'NAME)
 			      "vanishes without a trace"))
 		   (ask target 'DESTROY)))))
-
+;; seal random thing from another person in the room (target does not matter)
     (create-spell
      'accipere
      chamber
-     'MOBILE-THING
+     'THING
      "accipere"
      (lambda (caster target)
-       (map (lambda (thing) (ask caster 'take thing))
-	    (ask caster 'PEEK-AROUND))))
-
+       (let ((loot (pick-random (ask caster 'PEEK-AROUND))))
+	 (if loot
+	     (ask caster 'take loot)
+	     (ask caster 'EMIT '("but there is nothing to steal"))))))
+;; disarm target, take their wand 
     (create-spell
      'expelliarmus
      chamber
@@ -139,6 +141,16 @@
      (lambda (caster target)
        (map (lambda (wand) (ask caster 'take wand))
 	    (ask target 'HAS-A 'WAND))))
+;; disapear by leaving the room by a randomly chosen exit, target does
+    ;; not matter
+    (create-spell
+     'disapperate
+     chamber
+     'THING
+     "disapperate"
+     (lambda (caster target)
+       (let ((exit (pick-random (ask (ask caster 'LOCATION) 'EXITS))))
+	 (ask caster 'GO-EXIT exit))))
      
     chamber))
 
@@ -245,6 +257,7 @@
 ;;(create-wand 'unicorn-hair-wand (thing-named 'ron))
 ;;(map (lambda (spell) (clone-spell spell (ask me 'location)))
 ;;     (ask chamber-of-stata 'THINGS))
+;;(create-wand 'mywand me)
 ;;(ask (thing-named 'hermione) 'take (thing-named 'boil-spell))
 ;;(ask (thing-named 'ron) 'take (thing-named 'slug-spell))
 

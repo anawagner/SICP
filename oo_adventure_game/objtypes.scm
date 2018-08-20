@@ -474,7 +474,7 @@
 	(ask auto-part 'INSTALL)
 	(ask clock 'ADD-CALLBACK
 	     (create-clock-callback 'zap-people self 'ZAP-PEOPLE))
-	(create-wand 'magic-wand (ask self 'LOCATION)))
+	(create-wand 'magic-wand self))
       'ZAP-PEOPLE
       (lambda ()
 	(let ((wand   (pick-random (ask self 'HAS-A 'WAND)))
