@@ -459,6 +459,35 @@
      auto-part)))
 
 ;;
+;; WIT-STUDENT
+;;
+(define (create-wit-student name birthplace activity miserly)
+  (create-instance wit-student name birthplace activity miserly))
+
+(define (wit-student self name birthplace activity miserly)
+  (let ((auto-part (autonomous-person self name birthplace activity miserly)))
+    (make-handler
+     'wit-student
+     (make-methods
+      'INSTALL
+      (lambda ()
+	(ask auto-part 'INSTALL)
+	(ask clock 'ADD-CALLBACK
+	     (create-clock-callback 'zap-people self 'ZAP-PEOPLE))
+	(create-wand 'magic-wand (ask self 'LOCATION)))
+      'ZAP-PEOPLE
+      (lambda ()
+	(let ((wand   (pick-random (ask self 'HAS-A 'WAND)))
+	      (target (pick-random (ask self 'PEOPLE-AROUND))))
+	  (cond ((and wand target)       (ask wand 'ZAP target))
+		((and wand (not target)) (ask wand 'WAVE))
+		(else 'no-wand))))
+      'DIE
+      (lambda (perp)
+	(ask clock 'REMOVE-CALLBACK self 'zap-people)
+	(ask auto-part 'DIE perp)))
+     auto-part)))
+;;
 ;; spell
 ;;
 (define (create-spell name location target-type incant action)

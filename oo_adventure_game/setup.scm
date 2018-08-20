@@ -163,10 +163,10 @@
 
 (define (populate-players rooms)
   (let* ((students (map (lambda (name)
-			  (create-autonomous-person name
-						    (pick-random rooms)
-						    (random-number 3)
-						    (random-number 3)))
+			  (create-wit-student name
+					      (pick-random rooms)
+					      (random-number 3)
+					      (random-number 3)))
 			'(ben-bitdiddle alyssa-hacker
 			  course-6-frosh lambda-man)))
 ;uncomment after writing professors
@@ -235,3 +235,20 @@
 ; (show screen)
 ; (show clock)
 ; (pp me)
+
+(load "objsys.scm")
+(load "objtypes.scm")
+(setup 'ana)
+;;(create-wit-student 'hermione (ask me 'location) 1 10)
+;;(create-wit-student 'ron (ask me 'location) 1 10)
+;;(create-wand 'dragon-heartstring-wand (thing-named 'hermione))
+;;(create-wand 'unicorn-hair-wand (thing-named 'ron))
+;;(map (lambda (spell) (clone-spell spell (ask me 'location)))
+;;     (ask chamber-of-stata 'THINGS))
+;;(ask (thing-named 'hermione) 'take (thing-named 'boil-spell))
+;;(ask (thing-named 'ron) 'take (thing-named 'slug-spell))
+
+;; change accipere spell so that it shows a message when there are
+;; no items to take
+;;
+;; change EAT-PEOPLE in troll let victim (pick-random...
