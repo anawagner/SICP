@@ -487,6 +487,47 @@
 	(ask auto-part 'DIE perp)))
      auto-part)))
 ;;
+;; WIT-PROFESSOR
+;;
+(define (create-wit-professor name birthplace activity miserly)
+  (create-instance wit-professor name birthplace activity miserly))
+
+(define (wit-professor self name birthplace activity miserly)
+  (let ((wit-part (wit-student self name birthplace activity miserly)))
+    (make-handler
+     'wit-professor
+     (make-methods
+      'INSTALL
+      (lambda ()
+	(ask wit-part 'INSTALL)
+	(ask clock 'ADD-CALLBACK
+	     (create-clock-callback 'lecture self 'LECTURE)))
+      'LECTURE
+      (lambda ()
+	(let ((student
+	       (pick-random (filter (lambda (wits)
+				      (not (ask wits 'IS-A 'WIT-PROFESSOR)))
+				    (find-all (ask self 'LOCATION)
+						 'WIT-STUDENT)))))
+	  (cond (student
+		 (ask self 'SAY (list (ask student 'NAME)
+				      "I can teach you how to bewitch the mind"
+				      "and ensnare the senses..."))
+		 (ask self 'TEACH student))
+		(else 'no-one-to-lecture))))
+      'TEACH
+      (lambda (student)
+	(let ((spell (pick-random (ask chamber-of-stata 'THINGS))))
+	  (ask self 'SAY (list "repeat after me" (ask spell 'INCANT)))
+	  (ask student 'SAY (list (ask spell 'INCANT)))
+	  (clone-spell spell student)))
+      'DIE
+      (lambda (perp)
+	(ask clock 'REMOVE-CALLBACK self 'lecture)
+	(ask wit-part 'DIE perp)))
+     wit-part)))
+
+;;
 ;; spell
 ;;
 (define (create-spell name location target-type incant action)
@@ -565,7 +606,7 @@
 		      (else (ask caster 'EMIT
 				 (list (ask caster 'NAME) "waves"
 				       (ask self 'NAME)
-				       "to no avail"))))))
+				       "but can't remember any spells"))))))
 	    (error "Wand cannot ZAP unless held by PERSON")))
       'WAVE
       (lambda ()
