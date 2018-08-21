@@ -91,17 +91,18 @@
      "habooic katarnum"
      (lambda (caster target)
        (ask target 'EMIT (list (ask target 'NAME)
-			       "grows boils on their nose"))))
-    
+			       "grows boils on their nose")))
+     'boil-cure-potion)
     (create-spell
      'slug-spell
      chamber
      'PERSON
      "dagnabbit ekaterin"
      (lambda (caster target)
-       (ask target 'EMIT (list "A slug comes out of" (ask target 'NAME) "'s mouth."))
-       (create-mobile-thing 'slug (ask target 'LOCATION))))
-
+       (ask target 'EMIT (list "A slug comes out of"
+			       (ask target 'NAME) "'s mouth."))
+       (create-mobile-thing 'slug (ask target 'LOCATION)))
+     'treacle-fudge)
     (create-spell
      'wind-of-doom
      chamber
@@ -120,18 +121,24 @@
 			      (ask (ask target 'LOCATION) 'NAME)
 			      "and" (ask target 'NAME)
 			      "vanishes without a trace"))
-		   (ask target 'DESTROY)))))
-;; seal random thing from another person in the room (target does not matter)
+		   (ask target 'DESTROY))))
+     'protego-charm)
+    ;; if target is a person, steal something from anyone in the room
+    ;; else take the target
     (create-spell
      'accipere
      chamber
-     'THING
+     'MOBILE-THING
      "accipere"
      (lambda (caster target)
-       (let ((loot (pick-random (ask caster 'PEEK-AROUND))))
-	 (if loot
-	     (ask caster 'take loot)
-	     (ask caster 'EMIT '("but there is nothing to steal"))))))
+       (if (ask target 'IS-A 'PERSON)
+	   (let ((loot (pick-random (ask caster 'PEEK-AROUND))))
+	     (if loot
+		 (ask caster 'take loot)
+		 (ask caster 'EMIT
+		      '("but there is nothing to steal"))))
+	   (ask caster 'take target)))
+     'impervius-charm)
 ;; disarm target, take their wand 
     (create-spell
      'expelliarmus
@@ -140,9 +147,10 @@
      "expelliarmus"
      (lambda (caster target)
        (map (lambda (wand) (ask caster 'take wand))
-	    (ask target 'HAS-A 'WAND))))
-;; disapear by leaving the room by a randomly chosen exit, target does
-    ;; not matter
+	    (ask target 'HAS-A 'WAND)))
+     'accio-wand)
+    ;; disapear by leaving the room by a randomly chosen exit, target does
+    ;; not matter unless target has counterspell
     (create-spell
      'disapperate
      chamber
@@ -150,13 +158,22 @@
      "disapperate"
      (lambda (caster target)
        (let ((exit (pick-random (ask (ask caster 'LOCATION) 'EXITS))))
-	 (ask caster 'GO-EXIT exit))))
-     
+	 (ask caster 'GO-EXIT exit)))
+     'stupefy-spell)
     chamber))
 
 (define (populate-spells rooms)
   (for-each (lambda (room)
 	      (clone-spell (pick-random (ask chamber-of-stata 'THINGS)) room))
+	    rooms))
+
+(define (populate-counterspells rooms)
+  (define list-of-counterspell-names
+    '(boil-cure-potion treacle-fudge protego-charm
+		       impervius-charm accio-wand stupefy-spell))
+  (for-each (lambda (room)
+	      (create-counterspell (pick-random
+				    list-of-counterspell-names) room))
 	    rooms))
 
 (define (populate-special-items rooms)
@@ -218,6 +235,8 @@
 
     (populate-spells rooms)
 
+    (populate-counterspells rooms)
+
     (populate-players rooms)
 
     (populate-special-items rooms)
@@ -255,6 +274,10 @@
 ;;(map (lambda (spell) (clone-spell spell (ask me 'location)))
 ;;     (ask chamber-of-stata 'THINGS))
 ;;(create-wand 'mywand me)
+;;(ask me 'take (thing-named 'expelliarmus))
+;;(create-counterspell 'accio-wand (ask me 'location))
+;;(create-thing 'trash (ask me 'location))
+;;(ask (thing-named 'ron) 'take (thing-named 'accio-wand))
 ;;(create-troll 'zombie (ask me 'location) 1 3)
 ;;(ask (thing-named 'zombie) 'eat-people)
 ;;(create-wit-professor 'snape (ask me 'location) 3 10)
@@ -264,3 +287,4 @@
 ;;(create-wit-student 'hermione (ask me 'location) 1 10)
 ;;(ask (thing-named 'snape) 'lecture)
 ;;(ask (thing-named 'hermione) 'zap-people)
+

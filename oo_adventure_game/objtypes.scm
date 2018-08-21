@@ -273,7 +273,7 @@
 	(ask self 'SAY (list "I lose" (ask thing 'NAME)))
 	(ask self 'HAVE-FIT)
 	(ask thing 'CHANGE-LOCATION lose-to))
-        
+      
       'DROP
       (lambda (thing)
 	(ask self 'SAY (list "I drop" (ask thing 'NAME)
@@ -321,9 +321,7 @@
       'HAS-A-THING-NAMED
       (lambda (name)
 	(filter (lambda (thing)
-		  (if (eq? name (ask thing 'NAME))
-		      #t
-		      #f))
+		  (eq? name (ask thing 'NAME)))
 		(ask self 'THINGS))))
      mobile-thing-part container-part)))
 
@@ -530,10 +528,10 @@
 ;;
 ;; spell
 ;;
-(define (create-spell name location target-type incant action)
-  (create-instance spell name location target-type incant action))
+(define (create-spell name location target-type incant action counterspell-name)
+  (create-instance spell name location target-type incant action counterspell-name))
 
-(define (spell self name location target-type incant action)
+(define (spell self name location target-type incant action counterspell-name)
   (let ((mobile-part (mobile-thing self name location)))
     (make-handler
      'spell
@@ -542,15 +540,23 @@
       (lambda () incant)
       'TARGET-TYPE
       (lambda () target-type)
+      'COUNTERSPELL-NAME
+      (lambda () counterspell-name)
       'ACTION
       (lambda () action)
       'USE
       (lambda (caster target)
-	(if (ask target 'IS-A target-type)
-	    (action caster target)
-	    (ask target 'EMIT (list (ask self 'NAME)
+	(cond ((and (ask target 'IS-A target-type)
+		    (ask target 'IS-A 'PERSON)
+		    (pick-random (ask target 'HAS-A-THING-NAMED
+				      counterspell-name)))
+	       (ask (pick-random (ask target 'HAS-A-THING-NAMED
+				      counterspell-name)) 'USE-AGAINST self))
+	      ((ask target 'IS-A target-type)
+	       (action caster target))
+	      (else (ask target 'EMIT (list (ask self 'NAME)
 				    "has no effect on"
-				    (ask target 'NAME))))))
+				    (ask target 'NAME)))))))
      mobile-part)))
 
 (define (clone-spell spell newloc)
@@ -558,7 +564,25 @@
 		newloc
 		(ask spell 'TARGET-TYPE)
 		(ask spell 'INCANT)
-		(ask spell 'ACTION)))
+		(ask spell 'ACTION)
+		(ask spell 'COUNTERSPELL-NAME)))
+
+;;
+;; counterspell
+;;
+(define (create-counterspell name location)
+  (create-instance counterspell name location))
+
+(define (counterspell self name location)
+  (let ((mobile-part (mobile-thing self name location)))
+    (make-handler
+     'counterspell
+     (make-methods
+      'USE-AGAINST
+      (lambda (spell-to-counter)
+	(ask (ask self 'LOCATION) 'EMIT (list (ask self 'NAME) "counters"
+					      (ask spell-to-counter 'NAME)))))
+     mobile-part)))
 
 ;;
 ;; ring-of-obfuscation
