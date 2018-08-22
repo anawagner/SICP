@@ -498,6 +498,12 @@
       'INSTALL
       (lambda ()
 	(ask wit-part 'INSTALL)
+	(create-spell 'levitate self 'THING "wingardium leviosa"
+		      (lambda (caster target)
+			(ask target 'EMIT (list (ask target 'NAME)
+			     "rises up and hovers in the air, and drops"
+			     "with a thud to the floor")))
+		      'none)
 	(ask clock 'ADD-CALLBACK
 	     (create-clock-callback 'lecture self 'LECTURE)))
       'LECTURE
@@ -522,6 +528,32 @@
       'DIE
       (lambda (perp)
 	(ask clock 'REMOVE-CALLBACK self 'lecture)
+	(ask wit-part 'DIE perp)))
+     wit-part)))
+
+;;
+;; chosen-one
+;;
+(define (create-chosen-one name birthplace activity miserly)
+  (create-instance chosen-one name birthplace activity miserly))
+
+(define (chosen-one self name birthplace activity miserly)
+  (let ((wit-part (wit-student self name birthplace activity miserly)))
+    (make-handler
+     'chosen-one
+     (make-methods
+      'INSTALL
+      (lambda ()
+	(ask wit-part 'INSTALL))
+      'SUFFER
+      (lambda (hits perp)
+	(cond ((< hits (ask self 'HEALTH)) (ask wit-part 'SUFFER hits perp))
+	      (else
+	       (ask self 'EMIT (list (ask self 'NAME)
+				     "'s scar flares brightly"))
+	       (ask perp 'SUFFER hits self))))
+      'DIE
+      (lambda (perp)
 	(ask wit-part 'DIE perp)))
      wit-part)))
 

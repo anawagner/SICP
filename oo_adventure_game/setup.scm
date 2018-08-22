@@ -139,7 +139,7 @@
 		      '("but there is nothing to steal"))))
 	   (ask caster 'take target)))
      'impervius-charm)
-;; disarm target, take their wand 
+    ;; disarm target, take their wand 
     (create-spell
      'expelliarmus
      chamber
@@ -198,7 +198,6 @@
 					      (random-number 3)))
 			'(ben-bitdiddle alyssa-hacker
 			  course-6-frosh lambda-man)))
-;uncomment after writing professors
 	 (profs (map (lambda (name)
 		       (create-wit-professor name
 					     (pick-random rooms)
@@ -219,7 +218,7 @@
 		      '(grendel registrar))))
 
     (append students
-;	    profs        ;uncomment after writing wit-professor
+	    profs   
 	    monitors trolls)))
 
 (define me 'will-be-set-by-setup)
@@ -241,9 +240,8 @@
 
     (populate-special-items rooms)
 
-    ;uncomment after writing chosen one
-;    (create-chosen-one 'hairy-cdr (pick-random rooms)
-;		       (random-number 3) (random-number 3))
+    (create-chosen-one 'hairy-cdr (pick-random rooms)
+		       (random-number 3) (random-number 3))
     
     (set! me (create-avatar name (pick-random rooms)))
     (ask screen 'SET-ME me)
@@ -270,6 +268,7 @@
 ;;(load "objsys.scm")
 ;;(load "objtypes.scm")
 ;;(setup 'ana)
+;;(create-chosen-one 'hairy-cdr (ask me 'location) 3 3)
 ;;(create-wit-student 'ron (ask me 'location) 1 10)
 ;;(map (lambda (spell) (clone-spell spell (ask me 'location)))
 ;;     (ask chamber-of-stata 'THINGS))
