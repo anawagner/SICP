@@ -66,12 +66,6 @@
 
 						 weight))))))))))
 
-
-
-(define (add-sub-prob x y)
-  (cons-stream 0
-	       (cons-stream (+ (stream-car (add-sub-prob x y)) x)
-			    (stream-cdr (add-sub-prob x y)))))
 	       
 (define (print-n s n)
   (if (> n 0)
